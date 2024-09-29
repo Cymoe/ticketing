@@ -5,6 +5,10 @@ import { usePathname } from "next/navigation"
 import { Home, ShoppingCart, Package, Users, LineChart } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
+interface DashboardNavProps {
+  onLinkClick?: () => void;
+}
+
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/dashboard/orders", label: "Orders", icon: ShoppingCart, badge: "6" },
@@ -13,15 +17,16 @@ const navItems = [
   { href: "/dashboard/analytics", label: "Analytics", icon: LineChart },
 ]
 
-export function DashboardNav() {
+export function DashboardNav({ onLinkClick }: DashboardNavProps) {
   const pathname = usePathname()
 
   return (
-    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-      {navItems.map((item) => (
+    <nav className="grid items-start gap-2">
+      {navItems.map((item, index) => (
         <Link
-          key={item.href}
+          key={index}
           href={item.href}
+          onClick={onLinkClick}
           className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
             pathname === item.href
               ? "bg-accent text-accent-foreground"
