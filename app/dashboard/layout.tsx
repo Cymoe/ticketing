@@ -21,12 +21,21 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "@/components/mode-toggle"
 import { DashboardNav } from "@/components/DashboardNav"
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
 
-// Remove the export for description if you're not using it elsewhere
-// export const description = "..."
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { userId } = await auth();
 
-// Change this to default export
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  if (!userId) {
+    redirect("/auth/sign-in");
+  }
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -44,7 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <DashboardNav />
           </div>
           <div className="mt-auto p-4">
-            <Card x-chunk="dashboard-02-chunk-0">
+            <Card>
               <CardHeader className="p-2 pt-0 md:p-4">
                 <CardTitle>Upgrade to Pro</CardTitle>
                 <CardDescription>
@@ -112,30 +121,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </form>
           </div>
-          <div className="flex items-center gap-4">
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="rounded-full">
-                  <CircleUser className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <UserButton afterSignOutUrl="/" />
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
           {children}
         </main>
       </div>
     </div>
-  )
+  );
 }
