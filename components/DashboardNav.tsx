@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, ShoppingCart, Package, Users, LineChart } from "lucide-react"
+import { Home, ShoppingCart, Package, Users, LineChart, Ticket } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 interface DashboardNavProps {
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/dashboard/products", label: "Products", icon: Package },
   { href: "/dashboard/customers", label: "Customers", icon: Users },
   { href: "/dashboard/analytics", label: "Analytics", icon: LineChart },
+  { href: "/dashboard/tickets", label: "Tickets", icon: Ticket },
 ]
 
 export function DashboardNav({ onLinkClick }: DashboardNavProps) {

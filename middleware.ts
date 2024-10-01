@@ -1,4 +1,4 @@
-import { authMiddleware } from "@clerk/nextjs/server";
+import { authMiddleware } from '@clerk/nextjs/server'
 
 export default authMiddleware({
   publicRoutes: ["/", "/auth/sign-in(.*)", "/auth/sign-up(.*)"],
