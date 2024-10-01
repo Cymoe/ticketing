@@ -15,16 +15,22 @@ interface TicketType {
 // Replace 'var' with 'const' and use TicketType
 const ticketSchema = new Schema<TicketType>({
   // ... schema definition ...
-  title: { type: String, required: true },
+  title: { type: String, required: true, index: true },
   description: { type: String, required: true },
-  category: { type: String, required: true },
-  priority: { type: String, required: true },
-  status: { type: String, required: true },
+  category: { type: String, required: true, index: true },
+  priority: { type: String, required: true, index: true },
+  status: { type: String, required: true, index: true },
 }, { timestamps: true });
 
 // Export the dbConnect function
 export async function dbConnect() {
-  // ... your dbConnect logic ...
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+
+  return mongoose.connect(process.env.MONGODB_URI!, {
+    serverSelectionTimeoutMS: 5000,
+  });
 }
 
 // Export the Ticket model

@@ -18,19 +18,17 @@ export async function POST(request) {
         }
 
         console.log('Attempting to create ticket...');
-        const ticket = await Ticket.create({ title, description, category, priority, status })
+        const ticket = new Ticket({ title, description, category, priority, status });
+        await ticket.save();
         console.log("Created ticket:", ticket);
 
         return NextResponse.json({ ticket, message: "Ticket created successfully" }, { status: 201 })
     } catch (error) {
         console.error("Error creating ticket:", error);
-        if (error instanceof mongoose.Error) {
-            console.error("Mongoose error details:", error);
+        if (error instanceof mongoose.Error.ServerSelectionError) {
+            return NextResponse.json({ error: "Unable to connect to the database. Please try again later." }, { status: 503 })
         }
-        if (error.name === 'MongooseServerSelectionError') {
-            console.error("MongoDB server selection error. Check your connection string and network.");
-        }
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: "An error occurred while creating the ticket." }, { status: 500 })
     }
 }
 
