@@ -31,7 +31,7 @@ const formSchema = z.object({
 })
 
 type TicketFormProps = {
-  ticket?: z.infer<typeof formSchema>;
+  ticket?: z.infer<typeof formSchema> & { _id?: string };
 };
 
 const TicketForm = ({ ticket }: TicketFormProps) => {
@@ -49,29 +49,37 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch("/api/tickets", {
-        method: "POST",
+      const url = ticket?._id ? `/api/tickets/${ticket._id}` : '/api/tickets'
+      const method = ticket?._id ? 'PUT' : 'POST'
+
+      console.log("Submitting form with values:", values);
+      console.log("Request URL:", url);
+      console.log("Request method:", method);
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values)
-      });
+        body: JSON.stringify(values),
+      })
+
+      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Server error: ${errorData.error || response.statusText}`);
+        console.error("Error response:", errorData);
+        throw new Error(errorData.error || 'Failed to submit ticket');
       }
 
-      const data = await response.json();
-      console.log("Ticket submitted successfully:", data);
-      
-      // Redirect to the tickets page after successful submission
-      router.push("/dashboard/tickets");
-      // Refresh the page to reflect the new data
-      router.refresh();
+      const updatedTicket = await response.json();
+      console.log('Ticket updated successfully:', updatedTicket);
+
+      router.push('/dashboard/tickets')
+      router.refresh()
     } catch (error) {
-      console.error("Failed to submit ticket", error);
-      // You might want to show an error message to the user here
+      console.error('Error submitting ticket:', error)
+      // You might want to set an error state here to display to the user
     }
   }
 
@@ -98,11 +106,7 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Describe the issue..."
-                  className="resize-none"
-                  {...field}
-                />
+                <Textarea placeholder="Describe the issue" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -194,7 +198,7 @@ const TicketForm = ({ ticket }: TicketFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">{ticket?._id ? 'Update Ticket' : 'Create Ticket'}</Button>
       </form>
     </Form>
   )

@@ -28,9 +28,7 @@ export async function dbConnect() {
     return;
   }
 
-  return mongoose.connect(process.env.MONGODB_URI!, {
-    serverSelectionTimeoutMS: 5000,
-  });
+  return mongoose.connect(process.env.MONGODB_URI!);
 }
 
 // Export the Ticket model

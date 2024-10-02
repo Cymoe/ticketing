@@ -3,6 +3,23 @@ import DeleteBlock from './delete-block'
 import PriorityDisplay from './priority-display'
 import StatusDisplay from './status-display'
 
+const formatTimestamp = (timestamp: string | null) => { 
+    const options: Intl.DateTimeFormatOptions = 
+    { year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+
+    if (!timestamp) return 'N/A';
+
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', options);
+}
+
+
 // Update the Ticket interface
 interface Ticket {
     _id: string;
@@ -14,6 +31,8 @@ interface Ticket {
     createdAt: string | null;
     progress?: number;
 }
+
+
 
 const TicketCard = ({ ticket }: { ticket: Ticket }) => {
     console.log("Rendering ticket:", ticket);
@@ -32,7 +51,7 @@ const TicketCard = ({ ticket }: { ticket: Ticket }) => {
             <div className="mt-auto">
                 <div className="flex justify-between items-center mt-2">
                     <p className="text-xs text-gray-500">
-                        {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : 'N/A'}
+                        {ticket.createdAt ? formatTimestamp(ticket.createdAt) : 'N/A'}
                     </p>
                     <StatusDisplay status={ticket.status} />
                 </div>

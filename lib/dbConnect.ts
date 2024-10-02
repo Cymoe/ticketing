@@ -20,8 +20,8 @@ declare global {
 let cached = (global.mongoose as any) || { conn: null, promise: null };
 
 async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
   }
 
   if (!cached.promise) {
